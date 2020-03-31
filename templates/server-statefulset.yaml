@@ -58,7 +58,7 @@ spec:
         - name: config
           configMap:
             name: {{ template "consul.fullname" . }}-server-config
-        - name: data-default
+        - name: data-{{ template "consul.fullname" . }}
           flexVolume:
             driver: "alicloud/disk"
             fsType: "ext4"
@@ -166,7 +166,7 @@ spec:
                 {{- end }}
                 -server
           volumeMounts:
-            - name: data-{{ .Release.Namespace }}
+            - name: data-{{ template "consul.fullname" . }}
               mountPath: /consul/data
             - name: config
               mountPath: /consul/config
