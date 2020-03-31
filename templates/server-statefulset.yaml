@@ -58,6 +58,13 @@ spec:
         - name: config
           configMap:
             name: {{ template "consul.fullname" . }}-server-config
+        - name: data-default
+          flexVolume:
+            driver: "alicloud/disk"
+            fsType: "ext4"
+            options:
+              volumeType: "{{ .Values.server.storageClass}}"
+              volumeSize: "{{ .Values.server.storage }}" #create disk dynamically when no volumeId given, this feature is only for ECI pod.
         {{- if .Values.global.tls.enabled }}
         - name: consul-ca-cert
           secret:
@@ -233,16 +240,4 @@ spec:
       nodeSelector:
         {{ tpl .Values.server.nodeSelector . | indent 8 | trim }}
       {{- end }}
-  volumeClaimTemplates:
-    - metadata:
-        name: data-{{ .Release.Namespace }}
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: {{ .Values.server.storage }}
-        {{- if .Values.server.storageClass }}
-        storageClassName: {{ .Values.server.storageClass }}
-        {{- end }}
 {{- end }}
