@@ -155,7 +155,7 @@ spec:
                 -ui \
                 {{- end }}
                 {{- range $index := until (.Values.server.replicas | int) }}
-                -retry-join=${CONSUL_FULLNAME}-server-{{ $index }}.${CONSUL_FULLNAME}-server.${NAMESPACE}.svc \
+                -retry-join=${CONSUL_FULLNAME}-server-{{ $index }}.${CONSUL_FULLNAME}-server{{ $.Values.global.url_tail }} \
                 {{- end }}
                 -server
           volumeMounts:
