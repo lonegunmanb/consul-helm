@@ -1,10 +1,24 @@
+data "template_file" "server_resource" {
+  template = file("${path.module}/pod_resource")
+  vars     = {
+    request_memory = var.server_request_memory
+    request_cpu    = var.server_request_cpu
+    limits_memory  = var.server_limit_memory
+    limits_cpu     = var.server_limit_cpu
+  }
+}
+
 resource "helm_release" "consul" {
-  chart = path.module
-  name  = "consul"
+  chart     = path.module
+  name      = "consul"
   namespace = var.namespace
   set {
     name  = "fullnameOverride"
     value = "consul-${var.namespace}"
+  }
+  set {
+    name  = "global.url_tail"
+    value = var.url_tail
   }
   set {
     name  = "tests.enabled"
@@ -14,7 +28,7 @@ resource "helm_release" "consul" {
     name  = "ui.enabled"
     value = "true"
   }
-  set{
+  set {
     name  = "client.enabled"
     value = "false"
   }
@@ -35,7 +49,7 @@ resource "helm_release" "consul" {
     value = "2"
   }
   set {
-    name = "global.image"
+    name  = "global.image"
     value = var.image
   }
   set {
@@ -43,7 +57,30 @@ resource "helm_release" "consul" {
     value = var.storageClass
   }
   set {
-    name  = "global.url_tail"
-    value = var.url_tail
+    name  = "server.resources"
+    value = data.template_file.server_resource.rendered
+  }
+}
+
+resource "kubernetes_ingress" "consul_ui_ingress" {
+  count      = var.enable_public_ui ? 1 : 0
+  depends_on = [helm_release.consul]
+  metadata {
+    name      = "consul-ui-${var.namespace}"
+    namespace = var.namespace
+  }
+  spec {
+    rule {
+      host = "test-consul.lumous.cn"
+      http {
+        path {
+          path = "/"
+          backend {
+            service_name = "consul-${var.namespace}-ui"
+            service_port = "80"
+          }
+        }
+      }
+    }
   }
 }
