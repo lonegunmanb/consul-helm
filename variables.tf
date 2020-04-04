@@ -19,6 +19,10 @@ variable "enable_public_ui" {
   type = bool
   default = false
 }
+variable "consul_ui_url" {
+  type = string
+  default = "consul.local"
+}
 variable "server_request_memory" {
   type = string
   default = "128Mi"

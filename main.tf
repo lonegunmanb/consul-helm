@@ -71,7 +71,7 @@ resource "kubernetes_ingress" "consul_ui_ingress" {
   }
   spec {
     rule {
-      host = "test-consul.lumous.cn"
+      host = var.consul_ui_url
       http {
         path {
           path = "/"
