@@ -13,8 +13,8 @@ locals {
 }
 
 resource "helm_release" "consul" {
-  chart     = path.module
-  name      = "consul"
+  chart = path.module
+  name  = "consul"
   namespace = var.namespace
   set {
     name  = "fullnameOverride"
@@ -32,7 +32,7 @@ resource "helm_release" "consul" {
     name  = "ui.enabled"
     value = "true"
   }
-  set {
+  set{
     name  = "client.enabled"
     value = "false"
   }
