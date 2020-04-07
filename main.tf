@@ -8,13 +8,17 @@ data "template_file" "server_resource" {
   }
 }
 
+locals {
+  consul_full_name = "consul-${var.namespace}"
+}
+
 resource "helm_release" "consul" {
   chart     = path.module
   name      = "consul"
   namespace = var.namespace
   set {
     name  = "fullnameOverride"
-    value = "consul-${var.namespace}"
+    value = local.consul_full_name
   }
   set {
     name  = "global.url_tail"
@@ -76,11 +80,19 @@ resource "kubernetes_ingress" "consul_ui_ingress" {
         path {
           path = "/"
           backend {
-            service_name = "consul-${var.namespace}-ui"
+            service_name = "${local.consul_full_name}-ui"
             service_port = "80"
           }
         }
       }
     }
   }
+}
+
+output "consul_server_svc" {
+  value = "${local.consul_full_name}-server.${var.namespace}"
+}
+
+output "consul_server_svc_port" {
+  value = 8300
 }
