@@ -90,9 +90,11 @@ resource "kubernetes_ingress" "consul_ui_ingress" {
 }
 
 output "consul_server_svc" {
+  depends_on = [helm_release.consul]
   value = "${local.consul_full_name}-server.${var.namespace}"
 }
 
 output "consul_server_svc_port" {
+  depends_on = [helm_release.consul]
   value = 8300
 }
