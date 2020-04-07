@@ -94,6 +94,11 @@ output "consul_server_svc" {
   value = "${local.consul_full_name}-server.${var.namespace}"
 }
 
+output "consul_server_svc_http_port" {
+  depends_on = [helm_release.consul]
+  value = 8500
+}
+
 output "consul_server_svc_port" {
   depends_on = [helm_release.consul]
   value = 8300
