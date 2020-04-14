@@ -14,8 +14,8 @@ locals {
 
 resource "helm_release" "consul" {
   depends_on = [var.module_depends_on]
-  chart     = path.module
-  name      = "consul"
+  chart = path.module
+  name  = "consul"
   namespace = var.namespace
   set {
     name  = "fullnameOverride"
@@ -33,7 +33,7 @@ resource "helm_release" "consul" {
     name  = "ui.enabled"
     value = "true"
   }
-  set {
+  set{
     name  = "client.enabled"
     value = "false"
   }
