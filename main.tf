@@ -104,3 +104,11 @@ output "consul_server_svc_port" {
   depends_on = [helm_release.consul]
   value = 8300
 }
+
+output "revision" {
+  value = helm_release.consul.metadata[0].revision
+}
+
+output "version" {
+  value = helm_release.consul.metadata[0].version
+}
